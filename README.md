@@ -1,4 +1,4 @@
-preps
+PREPS
 =====
 A particle simulation to detect collision and to identify collided particles' velocities and positions.
 
