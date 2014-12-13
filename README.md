@@ -12,7 +12,7 @@ Proof Of Concept
 
 Plans
 ======
-1. Setup web server.
+1. Setup web server using play/lift framework.
 2. Build functions according to requirement (provided excel).
  
 Resources
