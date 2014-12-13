@@ -1,6 +1,6 @@
 PREPS
 =====
-A particle simulation to detect collision and to identify collided particles' velocities and positions.
+A particle simulator to detect collision and to identify collided particles' velocities and positions.
 
 Plans
 =====
