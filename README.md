@@ -2,16 +2,16 @@ PREPS
 =====
 A particle simulator to detect collision and to identify collided particles' velocities and positions.
 
-Proof Of Concept
-================
+Proof Of Concept (POC)
+======================
 1. Develop physic behaviour of particle on the web browser.
 2. Write 2D web graphics language, (gl) using javascript.
 3. Integrate particle's code into web graphic language.
 4. Count collision, compute velocities and positions.
 5. Repeat step 1 until step 4 until getting good graphic and computation performance (>10k particles).
 
-Plans
-======
+Plans After POC
+=================
 1. Setup web server using play/lift framework.
 2. Build functions according to requirement (provided excel).
  
