@@ -2,6 +2,7 @@
 without webgl
 =============
 https://github.com/gunsmoke/star-something/blob/master/js/base.js
+
 var fixDef = new b2FixtureDef;//density, friction, restitution
 var bodyDef = new b2BodyDef;//type and position
 var wb = world.CreateBody(bodyDef).CreateFixture(fixDef);
