@@ -4,7 +4,9 @@ without webgl
 https://github.com/gunsmoke/star-something/blob/master/js/base.js
 
 var fixDef = new b2FixtureDef;//density, friction, restitution
+
 var bodyDef = new b2BodyDef;//type and position
+
 var wb = world.CreateBody(bodyDef).CreateFixture(fixDef);
 
 
@@ -18,8 +20,11 @@ var spriteTexture = PIXI.Texture.fromImage("sprite.png");
 var sprite = new PIXI.Sprite(spriteTexture);
 
 var boxDef = new b2BoxDef();//density, friction, restitution
+
 var bodyDef = new b2BodyDef();//shape, position, rotation
+
 body = world.CreateBody(bodyDef);
+
 body.m_userData = sprite;
 
 
