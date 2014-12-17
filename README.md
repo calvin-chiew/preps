@@ -20,3 +20,12 @@ Resources
 http://gamma.cs.unc.edu/CULLIDE/
 http://gamma.cs.unc.edu/research/collision/
 https://www.tizen.org/events/tizen-developer-conference/2014/web-physics-hardware-accelerated-physics-engine-web-based-applications
+
+Create object in webgl:
+
+https://developer.mozilla.org/en-US/docs/Web/WebGL/Adding_2D_content_to_a_WebGL_context
+
+assign physics to graphic/object:
+
+http://www.iforce2d.net/b2dtut/user-data
+
