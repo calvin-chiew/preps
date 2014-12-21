@@ -29,3 +29,14 @@ body.m_userData = sprite;
 
 
 b2FixtureDef = b2BoxDef ??
+
+
+Shader
+======
+Fragment Shader 
+
+is a user-supplied program that, when executed, will process a Fragment from the rasterization process into a set of colors and a single depth value. The fragment shader is the OpenGL pipeline stage after a primitive is rasterized.
+
+Vertex Shader 
+
+is the programmable Shader stage in the rendering pipeline that handles the processing of individual vertices. Vertex shaders are fed Vertex Attribute data, as specified from a vertex array object by a rendering command.
