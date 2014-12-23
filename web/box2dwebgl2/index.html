@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<!-- saved from url=(0043)http://boblycat.org/~knute/webgl/box2dhtml/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>WebGL Box2D test</title>
+<style type="text/css">
+canvas {
+    padding: 10px;
+}
+#errors {
+    display: none;
+    background-color: #ffff80;
+    border-style: solid;
+    border-width: thin;
+    padding: 5px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    margin-left: 0;
+    margin-right: 0;
+}
+#error-message {
+    color: #802222;
+}
+p {
+    margin: 5px;
+}
+.canvasdiv {
+    float: left;
+}
+.controls {
+    vertical-align: top;
+    padding-left: 20px;
+    width: 220px;
+}
+.controls h3 {
+    padding-left: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+.controls .information {
+    margin-top: 20px;
+}
+.information {
+    max-width: 700px;
+    margin-top: 15px;
+}
+.information h3 {
+    margin: 10px;
+}
+.information p {
+    margin-left: 10px;
+}
+td {
+    vertical-align: top;
+}
+</style>
+<link rel="stylesheet" type="text/css" href="./WebGL Box2D test_files/jquery-ui-1.8.10.custom.css">
+<script type="text/javascript" src="./WebGL Box2D test_files/box2d.js"></script>
+<script type="text/javascript" src="./WebGL Box2D test_files/box2dtest.js"></script>
+<script type="text/javascript" src="./WebGL Box2D test_files/matrix3.js"></script>
+<script type="text/javascript" src="./WebGL Box2D test_files/gl2d.js"></script>
+<script type="text/javascript" src="./WebGL Box2D test_files/webgl-utils.js"></script>
+<script type="text/javascript" src="./WebGL Box2D test_files/jquery-1.5.1.min.js"></script>
+<script type="text/javascript" src="./WebGL Box2D test_files/jquery-ui-1.8.10.custom.min.js"></script>
+<script type="text/javascript">
+function displayError(msg) {
+    $('#error-message').empty();
+    $('#error-message').append(msg);
+    $('#errors').slideDown();
+}
+
+function updateSpawnText() {
+    $('#spawn-text').empty();
+    $('#spawn-text').append(config.seconds_between_spawn.toFixed(2));
+}
+
+function updatePhysicsFpsText() {
+    $('#phys-fps-text').empty();
+    $('#phys-fps-text').append(Math.round(1 / config.physics_timestep));
+}
+
+function updateCircleDetailText() {
+    $('#circle-detail-text').empty();
+    $('#circle-detail-text').append(config.circle_detail);
+}
+
+$(document).ready(function() {
+    var canvas = document.getElementById("glcanvas");
+    try {
+        init(canvas);
+
+        $('#glcanvas').resizable({
+            resize: function (event, ui) {
+                w = $('#glcanvas').width();
+                h = $('#glcanvas').height();
+                canvas.width = w;
+                canvas.height = h;
+                reshape(w, h);
+                draw(); // removes flickering in some browsers
+            }
+        });
+        
+        var change_func = function(event, ui) {
+            var rate = $('#spawn-slider').slider('value');
+            //console.debug('slide: ' + value);
+            config.seconds_between_spawn = rate / 100;
+            updateSpawnText();
+        }
+        $('#spawn-slider').slider({
+            min: 5,
+            max: 200,
+            value: Math.round(100 * config.seconds_between_spawn),
+            slide: change_func,
+            change: change_func
+        });
+        
+        updateSpawnText();
+        
+        var zoom_func = function(event, ui) {
+            var value = $('#zoom-slider').slider('value');
+            config.zoom = value / 10;
+            reshape(canvas.width, canvas.height);
+        }
+        $('#zoom-slider').slider({
+            min: 1,
+            max: 500,
+            value: 10 * config.zoom,
+            slide: zoom_func,
+            change: zoom_func
+        });
+        
+        var phys_fps_func = function(event, ui) {
+            var value = $('#phys-fps-slider').slider('value');
+            config.physics_timestep = 1.0 / value;
+            updatePhysicsFpsText();
+        }
+        $('#phys-fps-slider').slider({
+            min: 10,
+            max: 120,
+            value: Math.round(1 / config.physics_timestep),
+            slide: phys_fps_func,
+            change: phys_fps_func
+        });
+        updatePhysicsFpsText();
+        
+        var detail_func = function(event, ui) {
+            var value = $('#circle-detail-slider').slider('value');
+            updateCircleDetail(value);
+            updateCircleDetailText(value);
+        }
+        $('#circle-detail-slider').slider({
+            min: 8,
+            max: 100,
+            value: config.circle_detail,
+            slide: detail_func,
+            change: detail_func
+        });
+        updateCircleDetailText();
+        
+        fpsTimerCallback = function(fps) {
+            $('#draw-fps-text').empty();
+            $('#draw-fps-text').append(fps.toFixed(0));
+        };
+    }
+    catch (e) {
+        displayError('<b>' + e.name + '</b>: ' + e.message);
+    }
+});
+</script>
+</head>
+<body>
+    <div id="errors">
+        <p id="error-message">
+        </p><p>You need a browser that supports <a href="http://get.webgl.org/">WebGL</a> to view this demo.</p>
+    </div>
+    <table>
+        <tbody><tr>
+            <td>
+                <div class="ui-wrapper" style="overflow: hidden; position: relative; width: 622px; height: 502px; top: auto; left: auto; margin: 0px;"><canvas id="glcanvas" width="600" height="480" class="ui-corner-all ui-widget-content ui-resizable" style="margin: 0px; resize: none; position: static; zoom: 1; display: block; height: 480px; width: 600px;">
+            </canvas><div class="ui-resizable-handle ui-resizable-e"></div><div class="ui-resizable-handle ui-resizable-s"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 1001;"></div></div></td>
+            <td>
+                <div class="controls">
+                    <h3 class="ui-corner-all ui-widget-header">Spawn time: <span id="spawn-text">0.43</span>s</h3>
+                    <div id="spawn-slider" class="ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all"><a href="http://boblycat.org/~knute/webgl/box2dhtml/#" class="ui-slider-handle ui-state-default ui-corner-all" style="left: 19.4871794871795%;"></a></div>
+                    <h3 class="ui-corner-all ui-widget-header">Zoom</h3>
+                    <div id="zoom-slider" class="ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all"><a href="http://boblycat.org/~knute/webgl/box2dhtml/#" class="ui-slider-handle ui-state-default ui-corner-all" style="left: 36.87374749499%;"></a></div>
+                    <h3 class="ui-corner-all ui-widget-header">Physics FPS: <span id="phys-fps-text">50</span></h3>
+                    <div id="phys-fps-slider" class="ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all"><a href="http://boblycat.org/~knute/webgl/box2dhtml/#" class="ui-slider-handle ui-state-default ui-corner-all" style="left: 36.3636363636364%;"></a></div>
+                    <h3 class="ui-corner-all ui-widget-header">Circle edges: <span id="circle-detail-text">29</span></h3>
+                    <div id="circle-detail-slider" class="ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all"><a href="http://boblycat.org/~knute/webgl/box2dhtml/#" class="ui-slider-handle ui-state-default ui-corner-all" style="left: 22.8260869565217%;"></a></div>
+                    
+                    <div class="ui-corner-all ui-widget-content ui-widget information">
+                        <p>Draw FPS: <span id="draw-fps-text">47</span></p>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </tbody></table>
+
+</body></html>
