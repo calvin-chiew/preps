@@ -9,6 +9,7 @@ Proof Of Concept (POC)
 3. Integrate particle's code into web graphic language.
 4. Count collision, compute velocities and positions.
 5. Repeat step 1 until step 4 until getting good graphic and computation performance (>10k particles).
+6. webgl mouse event
 
 Plans After POC
 =================
