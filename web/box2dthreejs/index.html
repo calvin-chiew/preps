@@ -1,0 +1,165 @@
+<html>
+<head>
+	<script src="js/three.min.js"></script>
+	<script src="js/box2d.js?s=771kb"></script>
+	<!--script src="http://localhost/threejs/three.js-master/build/three.min.js"></script>
+	<script src="http://localhost/PREPS_WEB/box2d.js-master/box2d.js?s=771kb"></script>
+	<script src="./three.js?Box2D???????????????_files/Box2dWeb-2.1.a.3.js"></script-->
+	<!--script src="//localhost/preps_demo/WebGL Demo_files/box2d.js?s=771kb"></script>
+	<script src="//localhost/preps_box2djs_webgl/Box2D WebGL Demo_files/box2d.js?s=725kb"></script>
+	<script src="//localhost/preps_demo/box2dwebgl/WebGL Box2D test_files/box2d.js?s=163kb"></script>
+	<script src="//localhost/preps_demo/basic-box2djs/Box2D Javascript Fun   00   Most Basic Box2D Example_files/box2d.min.js?s=220kb"></script-->
+	
+</head>
+<body>
+
+	<script>
+		var bodies = [null]; // Indexes start from 1
+		var world = null;
+		var bd = null;
+		var scene = new THREE.Scene();
+		var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 10000 );
+
+		var renderer = new THREE.WebGLRenderer();
+		renderer.setSize( window.innerWidth, window.innerHeight );
+		document.body.appendChild( renderer.domElement );
+
+		var geometry = new THREE.BoxGeometry( 1, 1 );
+		var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+		var cube = new THREE.Mesh( geometry, material );
+		scene.add( cube );
+
+		camera.position.x = 0;
+		camera.position.y = 15;
+		camera.position.z = 15;
+
+		var render = function () {
+			
+			requestAnimationFrame( render );
+		
+			if (world != null){
+				world.Step(
+					1 / 60,   //frame-rate
+					3,       //velocity iterations
+					3       //position iterations
+				);
+				world.ClearForces();
+				
+			  //console.log(bd.GetPosition().get_x());//0
+			  //console.log(bd.GetPosition().get_y());//0
+			  //console.log(bodies[1].GetPosition().get_y());//0
+			  //console.log(player_fixture.GetUserData());//0
+			  //console.log(player_fixture.GetBody().m_userData);//undefined
+			  //console.log(player_fixture.GetBody().GetPosition().get_x());//3.xxx
+			  //console.log(player_fixture.GetBody().GetPosition().get_y());//0
+			}
+		  
+			//cube.rotation.x += 0.1;
+			//cube.rotation.y += 0.1;
+
+			cube.position.x = bd.GetPosition().get_x();
+			cube.position.y = bd.GetPosition().get_y();
+			
+			var xAxis = new THREE.Vector3(1,0,0);
+			////rotateAroundWorldAxis(cube, xAxis, bd.GetAngle()*180/Math.PI);
+			
+			/*
+			cube.rotation.z = bd.GetAngle()*180/Math.PI;
+			cube.rotation.x = bd.GetAngle()*180/Math.PI;
+			cube.rotation.y = bd.GetAngle()*180/Math.PI;
+			*/
+			//var euler = new THREE.Euler( bd.GetAngle(), 0, 0, 'XYZ' );
+			//cube.position.applyEuler(euler);
+			//cube.rotation = [0, 0, bd.GetAngle()*180/Math.PI];
+			renderer.render(scene, camera);
+		};
+
+		var rotWorldMatrix;
+		// Rotate an object around an arbitrary axis in world space       
+		function rotateAroundWorldAxis(object, axis, radians) {
+			rotWorldMatrix = new THREE.Matrix4();
+			rotWorldMatrix.makeRotationAxis(axis.normalize(), radians);
+
+			// old code for Three.JS pre r54:
+			//  rotWorldMatrix.multiply(object.matrix);
+			// new code for Three.JS r55+:
+			rotWorldMatrix.multiply(object.matrix);                // pre-multiply
+
+			object.matrix = rotWorldMatrix;
+
+			// old code for Three.js pre r49:
+			// object.rotation.getRotationFromMatrix(object.matrix, object.scale);
+			// old code for Three.js pre r59:
+			// object.rotation.setEulerFromRotationMatrix(object.matrix);
+			// code for r59+:
+			object.rotation.setFromRotationMatrix(object.matrix);
+		}
+		
+		function startPhysics() {
+		  /*var b2Vec2 = Box2D.Common.Math.b2Vec2
+			, b2World = Box2D.Dynamics.b2World
+			, b2FixtureDef = Box2D.Dynamics.b2FixtureDef
+			, b2BodyDef = Box2D.Dynamics.b2BodyDef
+			, b2Body = Box2D.Dynamics.b2Body
+			, b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape;
+			*/
+			var b2Vec2 = Box2D.b2Vec2
+			, b2World = Box2D.b2World
+			, b2FixtureDef = Box2D.b2FixtureDef
+			, b2BodyDef = Box2D.b2BodyDef
+			, b2Body = Box2D.b2Body
+			, b2PolygonShape = Box2D.b2PolygonShape;
+
+		  world = new b2World(
+			new b2Vec2(0, -10),    //gravity
+			true                  //allow sleep
+		  );
+
+		  var fixDef = new b2FixtureDef;
+		  fixDef.density = 1.0;
+		  fixDef.friction = 0.5;
+		  fixDef.restitution = 0.2;
+
+		  var bodyDef = new Box2D.b2BodyDef;
+
+		  //create ground
+		  //bodyDef.type = b2Body.b2_staticBody;
+          bodyDef.set_type(Box2D.b2_staticBody);
+		  //bodyDef.set_position(9, 13);
+		  //fixDef.shape = new b2PolygonShape;
+		  //fixDef.shape.SetAsBox(10, 0.5);
+		  
+		  
+          var shape0 = new Box2D.b2EdgeShape();
+          shape0.Set(new Box2D.b2Vec2(-40.0, 6.0), new Box2D.b2Vec2(40.0, 6.0));
+		  world.CreateBody(bodyDef).CreateFixture(shape0, 10);
+
+		  // player
+		  //bodyDef.type = b2Body.b2_dynamicBody;
+          bodyDef.set_type(Box2D.b2_dynamicBody);
+		  //fixDef.shape = new b2PolygonShape;
+		  /*fixDef.shape.SetAsBox(
+			Math.random() + 0.1 //half width
+			,  Math.random() + 0.1 //half height
+		  );*/
+		  
+		  //fixDef.shape.SetAsBox(2,3);
+
+		  var size = 1.0;
+          var shape = new Box2D.b2PolygonShape();
+          shape.SetAsBox(size, size);
+		  
+		  
+		  var ZERO = new Box2D.b2Vec2(0.0, 36.0);
+		  bodyDef.set_position(ZERO);
+		  bd = world.CreateBody(bodyDef);
+		  //bd.CreateFixture(fixDef);
+		  bd.CreateFixture(shape, 10);
+		  bodies.push(bd)
+		}
+		
+		startPhysics();
+		render();
+	</script>
+</body>
+</html>
